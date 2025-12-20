@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IsItTrue - Fact Checker AI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">✓</div>
+                    <h1>IsItTrue</h1>
+                    <p class="tagline">Vérificateur d'informations alimenté par l'IA</p>
+                </div>
+                <p class="powered-by">Alimenté par Gemini 2.5 Flash ⚡</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="text">
+                    <span class="icon">📝</span> Texte
+                </button>
+                <button class="tab-btn" data-tab="url">
+                    <span class="icon">🔗</span> Lien
+                </button>
+                <button class="tab-btn" data-tab="image">
+                    <span class="icon">📸</span> Image
+                </button>
+                <button class="tab-btn" data-tab="audio">
+                    <span class="icon">🎤</span> Audio
+                </button>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <!-- Text Tab -->
+                <div class="tab-content active" id="text-tab">
+                    <div class="input-area">
+                        <textarea id="textInput" placeholder="Entrez le texte ou la rumeur à vérifier..." class="textarea"></textarea>
+                        <button class="btn-analyze" onclick="analyzeText()">
+                            <span class="loading-spinner" style="display:none;"></span>
+                            Analyser
+                        </button>
+                    </div>
+                </div>
+
+                <!-- URL Tab -->
+                <div class="tab-content" id="url-tab">
+                    <div class="input-area">
+                        <input type="url" id="urlInput" placeholder="Collez l'URL d'un article à vérifier..." class="input-field">
+                        <button class="btn-analyze" onclick="analyzeUrl()">
+                            <span class="loading-spinner" style="display:none;"></span>
+                            Analyser
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Tab -->
+                <div class="tab-content" id="image-tab">
+                    <div class="input-area image-upload">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">📸</div>
+                            <p>Cliquez ou glissez une image ici</p>
+                            <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                        </div>
+                        <div id="imagePreview" style="display:none; margin: 20px 0;">
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <textarea id="imageCaption" placeholder="Ajoutez une description (optionnel)" class="textarea" style="margin-top: 10px;"></textarea>
+                        </div>
+                        <button class="btn-analyze" id="analyzeImageBtn" onclick="analyzeImage()" style="display:none;">
+                            <span class="loading-spinner" style="display:none;"></span>
+                            Analyser l'image
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audio Tab -->
+                <div class="tab-content" id="audio-tab">
+                    <div class="input-area audio-upload">
+                        <div class="audio-recorder">
+                            <div class="recorder-controls">
+                                <button class="btn-record" id="recordBtn" onclick="startRecording()">
+                                    🎤 Enregistrer
+                                </button>
+                                <button class="btn-stop" id="stopBtn" onclick="stopRecording()" style="display:none;">
+                                    ⏹️ Arrêter
+                                </button>
+                            </div>
+                            <div id="recordingTime" style="display:none; margin: 10px 0; text-align: center;">
+                                Temps: <span id="timer">00:00</span>
+                            </div>
+                            <div id="audioPlayback" style="display:none; margin: 20px 0;">
+                                <audio id="audioPlayer" controls style="width: 100%;"></audio>
+                            </div>
+                            <p style="text-align: center; margin-top: 20px; color: #666;">
+                                Ou chargez un fichier audio
+                            </p>
+                            <input type="file" id="audioInput" accept="audio/*" style="display:none;">
+                            <button class="btn-secondary" onclick="document.getElementById('audioInput').click();">
+                                Charger un fichier audio
+                            </button>
+                            <button class="btn-analyze" id="analyzeAudioBtn" onclick="analyzeAudio()" style="display:none;">
+                                <span class="loading-spinner" style="display:none;"></span>
+                                Analyser l'audio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div id="resultContainer" class="result-container" style="display:none;">
+                    <div class="result-header">
+                        <h2>📊 Résultat de l'analyse</h2>
+                        <button class="btn-close" onclick="clearResult()">✕</button>
+                    </div>
+                    <div class="result-content">
+                        <div id="resultText" class="result-text"></div>
+                    </div>
+                </div>
+
+                <div id="loadingContainer" class="loading-container" style="display:none;">
+                    <div class="spinner-large"></div>
+                    <p>Analyse en cours...</p>
+                </div>
+
+                <div id="errorContainer" class="error-container" style="display:none;">
+                    <h3>⚠️ Erreur</h3>
+                    <p id="errorText"></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>IsItTrue © 2025 - Vérifiez avant de partager</p>
+            <div class="footer-links">
+                <a href="#about">À propos</a>
+                <a href="#privacy">Confidentialité</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
