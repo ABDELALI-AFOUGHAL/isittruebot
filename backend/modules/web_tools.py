@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 def extract_url_content(text):
     """
     Détecte un lien URL, télécharge la page et extrait le texte principal.
+    Supporte les protocoles http et https.
     
     Args:
         text (str): Text potentially containing a URL
@@ -22,29 +23,42 @@ def extract_url_content(text):
     Returns:
         tuple: (url, content) or (None, None) if no URL found
     """
-    if not text:
+    if not text or not isinstance(text, str):
         return None, None
     
-    # Regex pour trouver http ou https
-    url_match = re.search(r'(https?://\S+)', text)
+    # Regex pour trouver http ou https URLs
+    url_match = re.search(r'(https?://[^\s]+)', text)
     if not url_match:
+        logger.debug(f"Pas d'URL trouvée dans: {text[:50]}")
         return None, None
 
-    url = url_match.group(0)
-    logger.info(f"📄 Lien détecté, tentative de lecture : {url}")
+    url = url_match.group(0).rstrip('.,;:!?\'"')  # Nettoie les caractères finaux
+    logger.info(f"📄 URL détectée: {url}")
     
     try:
-        # Trafilatura est excellent pour ignorer les pubs et menus
-        downloaded = trafilatura.fetch_url(url)
-        if downloaded:
-            article_text = trafilatura.extract(downloaded)
-            if article_text:
-                # On limite la taille pour ne pas saturer le prompt
-                return url, article_text[:MAX_URL_CONTENT]
+        # Trafilatura est excellent pour ignorer les pubs, menus, etc.
+        logger.info(f"⏳ Téléchargement de {url}...")
+        downloaded = trafilatura.fetch_url(url, timeout=10)
+        
+        if not downloaded:
+            logger.warning(f"❌ Impossible de télécharger {url}")
+            return url, None
+        
+        # Extraction du texte principal
+        article_text = trafilatura.extract(downloaded)
+        
+        if not article_text:
+            logger.warning(f"❌ Pas de contenu extractible de {url}")
+            return url, None
+        
+        # Limite la taille pour ne pas saturer le prompt
+        content = article_text[:MAX_URL_CONTENT]
+        logger.info(f"✅ Contenu extrait: {len(content)} caractères")
+        return url, content
+        
     except Exception as e:
-        logger.error(f"Erreur lors de la lecture du lien : {e}")
-    
-    return url, None
+        logger.error(f"❌ Erreur lors de la lecture de {url}: {str(e)}")
+        return url, None
 
 
 def search_web(query):

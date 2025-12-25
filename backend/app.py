@@ -1,83 +1,147 @@
 # -*- coding: utf-8 -*-
 """
-Flask API for IsItTrue Web Interface
+IsItTrue - Friendly AI Agent Backend
+Senior Python Developer - Professional Architecture v4.0
+
+Structure:
+- core/        → AI Agent logic, request processing
+- api/         → REST API endpoints
+- services/    → Gemini AI integration
+- integrations/ → Telegram, external services
+- frontend/    → Web UI (templates, static files)
 """
 
-from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
-import asyncio
 import logging
-from modules.analyzer import IsItTrueAnalyzer
-from modules.logger import setup_logger
-from modules.config import FLASK_HOST, FLASK_PORT, FLASK_DEBUG
+import logging.config
+from flask import Flask, render_template
+from flask_cors import CORS
+from pathlib import Path
 
-logger = setup_logger(__name__)
+# Import configuration and services
+from config import active_config, LOGGING_CONFIG, SYSTEM_PROMPTS
+from services import GeminiService
+from api import init_api
 
-app = Flask(__name__, template_folder='../frontend', static_folder='../frontend')
-CORS(app)
+# ==================== LOGGING SETUP ====================
 
+# Create logs directory
+logs_dir = Path(__file__).parent.parent / 'logs'
+logs_dir.mkdir(exist_ok=True)
 
-@app.route('/')
-def index():
-    """Serve the main page"""
-    return render_template('index.html')
+# Configure logging
+logging.config.dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
+# ==================== FLASK APPLICATION FACTORY ====================
 
-@app.route('/api/analyze', methods=['POST'])
-async def analyze():
+def create_app(config=None):
     """
-    API endpoint for analysis
-    Expects JSON with: text, image (base64), or audio (base64)
+    Application factory for Flask
+    
+    Args:
+        config: Configuration object (default: active_config)
+        
+    Returns:
+        Configured Flask application
     """
+    if config is None:
+        config = active_config
+    
+    # Initialize Flask
+    app = Flask(
+        __name__,
+        template_folder=str(config.TEMPLATE_FOLDER),
+        static_folder=str(config.STATIC_FOLDER),
+        static_url_path=config.STATIC_URL_PATH
+    )
+    
+    # Apply configuration
+    app.config.from_object(config)
+    app.config_obj = config
+    
+    # Enable CORS
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    
+    # ==================== SERVICE INITIALIZATION ====================
+    
+    # Initialize Gemini Service
     try:
-        data = request.get_json()
-        user_text = data.get('text', '').strip()
-        image_data = data.get('image')
-        audio_data = data.get('audio')
-
-        if not user_text and not image_data and not audio_data:
-            return jsonify({'error': 'Veuillez fournir du texte, une image ou un audio'}), 400
-
-        logger.info("🔄 Analyse lancée...")
-        
-        # Decode base64 if needed
-        image_bytes = None
-        audio_bytes = None
-        
-        if image_data:
-            import base64
-            try:
-                image_bytes = base64.b64decode(image_data.split(',')[1])
-            except Exception as e:
-                logger.error(f"Erreur décodage image: {e}")
-        
-        if audio_data:
-            import base64
-            try:
-                audio_bytes = base64.b64decode(audio_data.split(',')[1])
-            except Exception as e:
-                logger.error(f"Erreur décodage audio: {e}")
-
-        # Process through analyzer
-        response = await IsItTrueAnalyzer.process_input(
-            user_text=user_text,
-            image_data=image_bytes,
-            audio_data=audio_bytes
+        app.gemini_service = GeminiService(
+            api_key=config.__dict__.get('GOOGLE_API_KEY') or __import__('config').GOOGLE_API_KEY,
+            model=config.AI_MODEL
         )
+    except ValueError as e:
+        logger.error(f"[ERROR] Failed to initialize Gemini: {e}")
+        raise
+    
+    # ==================== BLUEPRINT REGISTRATION ====================
+    
+    # Register API blueprints
+    init_api(app, app.gemini_service, config)
+    
+    # ==================== ROUTE: WEB UI ====================
+    
+    @app.route('/')
+    def index():
+        """Serve main web interface"""
+        return render_template('index.html')
+    
+    @app.route('/dashboard')
+    def dashboard():
+        """Serve dashboard"""
+        return render_template('dashboard.html')
+    
+    # ==================== ERROR HANDLERS ====================
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        """Handle 404 errors"""
+        return render_template('404.html'), 404
+    
+    @app.errorhandler(500)
+    def internal_error(error):
+        """Handle 500 errors"""
+        logger.error(f"Internal server error: {error}")
+        return render_template('500.html'), 500
+    
+    @app.errorhandler(413)
+    def request_too_large(error):
+        """Handle file too large"""
+        return {'error': 'Request payload too large'}, 413
+    
+    # ==================== STARTUP BANNER ====================
+    
+    with app.app_context():
+        logger.info("=" * 70)
+        logger.info("🤖 IsItTrue - Friendly AI Agent Backend v4.0")
+        logger.info("=" * 70)
+        logger.info(f"Environment: {__import__('config').ENVIRONMENT}")
+        logger.info(f"Debug Mode: {app.debug}")
+        logger.info(f"AI Model: {config.AI_MODEL}")
+        logger.info("=" * 70)
+        logger.info("🎯 Capabilities:")
+        logger.info("  ✓ Fact-Checking")
+        logger.info("  ✓ AI Detection")
+        logger.info("  ✓ General Chat")
+        logger.info("=" * 70)
+        logger.info(f"📁 Templates: {config.TEMPLATE_FOLDER}")
+        logger.info(f"📁 Static: {config.STATIC_FOLDER}")
+        logger.info("=" * 70)
+    
+    return app
 
-        return jsonify({'result': response}), 200
 
-    except Exception as e:
-        logger.error(f"Erreur API: {e}")
-        return jsonify({'error': f'Erreur serveur: {str(e)}'}), 500
+# ==================== APPLICATION ENTRY POINT ====================
 
-
-@app.route('/api/health', methods=['GET'])
-def health():
-    """Health check endpoint"""
-    return jsonify({'status': 'ok'}), 200
-
+# Create the application instance
+app = create_app(active_config)
 
 if __name__ == '__main__':
-    print("🚀 IsItTrue Web Server - Démarrage...")
-    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
+    # Run Flask development server
+    app.run(
+        host='0.0.0.0',
+        port=5000,
+        debug=active_config.DEBUG,
+        use_reloader=active_config.DEBUG
+    )
+

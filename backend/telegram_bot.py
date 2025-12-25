@@ -9,9 +9,7 @@ import logging
 from telegram import Update, constants
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler, filters
 
-# Import from restructured modules
-import sys
-sys.path.insert(0, 'backend')
+# Import from modules
 from modules.analyzer import IsItTrueAnalyzer
 from modules.logger import setup_logger
 from modules.config import TELEGRAM_TOKEN
@@ -79,7 +77,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def main():
     """Start the Telegram bot"""
-    logger.info("🚀 IsItTrue Bot Starting...")
+    logger.info("🚀 IsItTrue Telegram Bot Starting...")
     
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
@@ -87,10 +85,20 @@ async def main():
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(MessageHandler(filters.ALL & (~filters.COMMAND), handle_message))
     
-    logger.info("✅ Bot is online and ready!")
+    logger.info("✅ Bot initialized successfully!")
+    logger.info("📡 Starting polling...")
     
+    # Start polling
     await application.run_polling()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    try:
+        logger.info("=" * 50)
+        logger.info("🤖 IsItTrue Telegram Bot v2.0")
+        logger.info("=" * 50)
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("\n🛑 Bot stopped by user")
+    except Exception as e:
+        logger.error(f"❌ Critical error: {e}", exc_info=True)

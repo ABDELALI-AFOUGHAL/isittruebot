@@ -1,0 +1,369 @@
+/* ==================== IsItTrue v4.0 CSS ==================== */
+
+:root {
+    --primary-blue: #0066cc;
+    --secondary-blue: #0052a3;
+    --info-blue: #0dcaf0;
+    --success-green: #198754;
+    --danger-red: #dc3545;
+    --light-bg: #f8f9fa;
+    --dark-text: #212529;
+    --muted-text: #6c757d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--dark-text);
+}
+
+/* ==================== Navigation ==================== */
+
+.navbar {
+    background: white !important;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* ==================== Cards ==================== */
+
+.card {
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+/* ==================== Forms ==================== */
+
+.form-control, .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 150px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==================== Buttons ==================== */
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.btn-outline-primary {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary.active {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-outline-info {
+    color: var(--info-blue);
+    border-color: var(--info-blue);
+}
+
+.btn-outline-info:hover, .btn-outline-info.active {
+    background: var(--info-blue);
+    border-color: var(--info-blue);
+}
+
+.btn-outline-success {
+    color: var(--success-green);
+    border-color: var(--success-green);
+}
+
+.btn-outline-success:hover, .btn-outline-success.active {
+    background: var(--success-green);
+    border-color: var(--success-green);
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+/* ==================== Radio Button Groups ==================== */
+
+.btn-group {
+    display: flex;
+    gap: 0;
+}
+
+.btn-check:checked + .btn {
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ==================== Range Slider ==================== */
+
+.form-range {
+    height: 6px;
+}
+
+.form-range::-webkit-slider-thumb {
+    background: var(--primary-blue);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-range::-moz-range-thumb {
+    background: var(--primary-blue);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== Alerts ==================== */
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    animation: slideDown 0.3s ease;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== Spinners ==================== */
+
+.spinner-border {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+}
+
+/* ==================== Results ==================== */
+
+.pre-formatted {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#resultType {
+    background: var(--light-bg);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ==================== Typography ==================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.text-muted {
+    color: var(--muted-text) !important;
+}
+
+.lead {
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* ==================== Utility Classes ==================== */
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.bg-light {
+    background: var(--light-bg) !important;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+.gap-4 {
+    gap: 1.5rem;
+}
+
+/* ==================== Badges ==================== */
+
+.badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+}
+
+.badge.bg-info {
+    background: var(--info-blue) !important;
+}
+
+/* ==================== Features Grid ==================== */
+
+.card-body {
+    padding: 24px;
+}
+
+.card-body i {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-body i {
+    transform: scale(1.1);
+}
+
+/* ==================== Responsive ==================== */
+
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .container-lg {
+        padding: 0 15px;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+    }
+
+    .pre-formatted {
+        font-size: 12px;
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .display-5 {
+        font-size: 1.5rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+}
+
+/* ==================== Animations ==================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+    animation: slideUp 0.4s ease;
+}
+
+/* ==================== Scrollbar ==================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-blue);
+}

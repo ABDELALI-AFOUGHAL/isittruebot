@@ -16,7 +16,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBe0aZmGkXszybixlfzE63UBkqf9j
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # Web Server
-FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
+FLASK_HOST = os.getenv("FLASK_HOST", "0.0.0.0")
 FLASK_PORT = int(os.getenv("FLASK_PORT", 5000))
 FLASK_DEBUG = os.getenv("FLASK_DEBUG", "True") == "True"
 

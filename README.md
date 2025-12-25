@@ -199,6 +199,26 @@ Contributions welcome! Please:
 3. Make your changes
 4. Submit a pull request
 
+## ⚠️ API Quota Management
+
+The application includes **automatic retry mechanism with exponential backoff** for API quota limits (429 errors):
+
+- **Automatic Retries**: Up to 3 attempts with delays (1s → 2s → 4s)
+- **Rate Limit Detection**: Identifies quota errors specifically
+- **User-Friendly Messages**: Errors in user's detected language
+- **Frontend Caching**: Results cached for 1 hour to reduce API calls
+
+### If You Get 429 Error
+1. Wait a few minutes (quota resets daily)
+2. Check your API plan at: https://aistudio.google.com/app/apikey
+3. Upgrade to paid plan if needed
+4. See `API_QUOTA_MANAGEMENT.md` for detailed solutions
+
+### Monitor Your Usage
+- Visit: https://console.cloud.google.com/apis/dashboard
+- Check "Google Generative AI API" quotas
+- Track daily request limits
+
 ## 📞 Support
 
 Need help? Check:
@@ -206,6 +226,7 @@ Need help? Check:
 - 🔍 Docstrings in Python modules
 - 🎨 CSS class naming conventions
 - 💬 GitHub Issues
+- 📋 See `API_QUOTA_MANAGEMENT.md` for quota issues
 
 ## 🎯 Roadmap
 
